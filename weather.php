@@ -1,16 +1,40 @@
 <?php
-require_once 'apikey.php';
-$city  = "4423701";// reference city.list.json
-$units = "imperial";// imperial, metric, & kelvin (default, don't specify unit)
-$url   = "http://api.openweathermap.org/data/2.5/weather?id=$city&lang=en&units=$units&APPID=$apikey";
+require 'formpost.php';
 
-$contents = file_get_contents($url);
-$clima    = json_decode($contents);
+// section to open curl connection to openweather, get json //
 
-$temp_max = $clima->main->temp_max;
-$temp_min = $clima->main->temp_min;
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+		CURLOPT_URL            => $url,
+		CURLOPT_RETURNTRANSFER => 1, )
+);
+
+$results = curl_exec($curl);// saves json in a variable
+
+curl_close($curl);// closes curl connection
+
+// display json data //
+
+$clima    = json_decode($results);
+$tempmax  = $clima->main->temp_max;
+$tempmin  = $clima->main->temp_min;
 $icon     = $clima->weather[0]->icon.".png";
+$cityname = $clima->name;
 
 date_default_timezone_set('America/New_York');
-$today    = date("M j, Y g:i a");
-$cityname = $clima->name;
+$today = date("M j, Y g:i a");
+?>
+
+<?php require 'header.php'?>
+<div class="container">
+	<h1>Find out the current weather in your city!</h1>
+	<ul>
+		<li>City: <?php echo $cityname;?></li>
+		<li>Date: <?php echo $today;?></li>
+		<li>Temp Max: <?php echo $tempmax."&deg;F<br>"?></li>
+		<li>Temp min: <?php echo $tempmin."&deg;F<br>"?></li>
+		<li><?php echo "<img src='http://openweathermap.org/img/w/".$icon."'/>";?></li>
+	</ul>
+	</div>
+<?php require 'footer.php';?>
