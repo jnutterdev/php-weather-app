@@ -1,2 +1,3 @@
-Simple weather app created with php 7
-Currently will only return the weather and time for the city of Decatur, but eventually will return information based on a user's input
+##Simple weather app created with php 7
+
+- Currently returns weather by zipcode only, seems like the zipcode database doesn't include all locations
